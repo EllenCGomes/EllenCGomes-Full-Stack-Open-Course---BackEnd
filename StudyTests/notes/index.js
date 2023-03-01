@@ -1,8 +1,11 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
 app.use(express.json());
-app.use(requestLogger)
+app.use(express.static("build"))
+
+app.use(cors());
 
 let notes = [
     {
@@ -35,6 +38,8 @@ const requestLogger = (request, response, next) => {
     console.log("----");
     next()
 };
+
+app.use(requestLogger);
 
 app.get("/", (request, response) => {
     response.send("<h1>Hello Word</h1>")
@@ -83,7 +88,9 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = 3001;
-app.listen(PORT);
-console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
 
