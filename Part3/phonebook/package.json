@@ -7,7 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf ./build && cd ../../../Full-Stack-Open-Course/Part 2/phonebook && npm run build && cp -r ./build ../../../Full-Stack-Open-Course---BackEnd/Part 3/phonebook",
+    "build:ui": "rm -rf ./build && cd ../../../Full-Stack-Open-Course/Part2/phonebook && npm run build && cp -r ./build ../../../Full-Stack-Open-Course---BackEnd/Part3/phonebook",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "fly logs"
@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^7.0.0",
     "morgan": "^1.10.0"
