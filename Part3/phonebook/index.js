@@ -7,6 +7,12 @@ require("dotenv").config();
 
 const Contact = require("./models/contact");
 
+const errorHandler = (error, request, response, next) => {
+    if (error.name === "CastError") response.status(400).send({ error: "malformated id" });
+
+    next(error)
+}
+
 app.use(express.json());
 app.use(cors());
 app.use(express.static("build"));
@@ -26,58 +32,50 @@ app.use(morgan(function (tokens, req, res) {
     ].join(" ")
 }));
 
-// let phonebook = [
-//     {
-//         "id": 1,
-//         "name": "Arto Hellas",
-//         "number": "040-123456"
-//     },
-//     {
-//         "id": 2,
-//         "name": "Ada Lovelace",
-//         "number": "39-44-5323523"
-//     },
-//     {
-//         "id": 3,
-//         "name": "Dan Abramov",
-//         "number": "12-43-234345"
-//     },
-//     {
-//         "id": 4,
-//         "name": "Mary Poppendieck",
-//         "number": "39-23-6423122"
-//     },
-// ]
-
 app.get("/api/persons", (request, response) => {
     Contact.find({}).then(contacts => {
-        contacts ? response.json(contacts) : response.status(404)
+        contacts ? response.json(contacts) : response.status(404).end()
     })
 })
 
 app.get("/info", (request, response) => {
-    const len = Contact.find({}).then(contacts => contacts.length)
-    response.send(`
+    Contact.find({}).then(contacts => {
+        response.send(`
     <div>
-        <h3>Phonebook has info for ${len} people</h3>
+        <h3>Phonebook has info for ${contacts.length} people</h3>
         <h3>${new Date()}</h3>
     </div>
     `)
-})
-
-app.get("/api/persons/:id", (request, response) => {
-    Contact.findById(request.params.id).then(contact => {
-        contact ? response.json(contact) : response.status(404)
-    })
-
-})
-
-app.delete("/api/persons/:id", (request, response) => {
-    Contact.findById(request.params.id).then(contact => {
-        contact ? Contact.deleteOne({ _id: request.params.id }).then(() => response.status(204).end()) : response.status(404).end()
     })
 })
 
+app.get("/api/persons/:id", (request, response, next) => {
+    Contact.findById(request.params.id)
+        .then(contact =>
+            contact ? response.json(contact) : response.status(404).end())
+        .catch(error => next(error))
+
+})
+
+app.delete("/api/persons/:id", (request, response, next) => {
+    Contact.findByIdAndDelete(request.params.id)
+        .then(contact =>
+            contact ? response.status(204).end() : response.status(404).end())
+        .catch(error => next(error))
+})
+
+app.put("/api/persons/:id", (request, response, next) => {
+    const body = request.body;
+
+    const entry = {
+        name: body.name,
+        number: body.number,
+    }
+
+    Contact.findByIdAndUpdate(request.params.id, entry, { new: true })
+        .then(updatedContact => response.json(updatedContact))
+        .catch(error => next(error))
+})
 
 app.post("/api/persons", (request, response) => {
 
@@ -109,6 +107,8 @@ app.post("/api/persons", (request, response) => {
         }).catch(error => console.log(error.message))
     }
 })
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
