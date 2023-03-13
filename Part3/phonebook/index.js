@@ -8,7 +8,9 @@ require("dotenv").config();
 const Contact = require("./models/contact");
 
 const errorHandler = (error, request, response, next) => {
-    if (error.name === "CastError") response.status(400).send({ error: "malformated id" });
+    if (error.name === "CastError") { response.status(400).send({ error: "malformated id" }) } else if (error.name === "ValidationError") {
+        response.status(400).send({ error: `${error.message}` })
+    }
 
     next(error)
 }
@@ -77,7 +79,7 @@ app.put("/api/persons/:id", (request, response, next) => {
         .catch(error => next(error))
 })
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
 
     const body = request.body;
 
@@ -90,21 +92,12 @@ app.post("/api/persons", (request, response) => {
             error: "number missing"
         });
     } else {
-        Contact.find({ name: body.name }).then(person => {
-            if (person.length > 0) {
-                return response.status(400).json({
-                    error: "name must be unique"
-                })
-            } else {
-                const entry = new Contact({
-                    name: body.name,
-                    number: body.number
-                });
+        const entry = new Contact({
+            name: body.name,
+            number: body.number
+        });
 
-                entry.save().then(savedContact => response.json(savedContact));
-
-            }
-        }).catch(error => console.log(error.message))
+        entry.save().then(savedContact => response.json(savedContact)).catch(error => next(error));
     }
 })
 
