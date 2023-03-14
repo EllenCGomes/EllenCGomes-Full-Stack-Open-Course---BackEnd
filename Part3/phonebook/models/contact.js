@@ -1,3 +1,4 @@
+/* global process */
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);
@@ -8,7 +9,7 @@ console.log("connecting to ", url);
 
 mongoose.connect(url)
     .then(result => {
-        console.log("connected")
+        console.log("connected");
     })
     .catch(error => {
         console.log("error: ", error.message);
@@ -25,7 +26,7 @@ const contactSchema = new mongoose.Schema({
         minLength: 8,
         validate: {
             validator: function (v) {
-                return /^[0-9]{2,3}-[0-9]+$/.test(v)
+                return /^[0-9]{2,3}-[0-9]+$/.test(v);
             },
             message: props => `${props.value} is not a valid phone number! The format should be 00- or 000-`
         },
@@ -36,9 +37,9 @@ const contactSchema = new mongoose.Schema({
 contactSchema.set("toJSON", {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
-        delete returnedObject._id
-        delete returnedObject._v
+        delete returnedObject._id;
+        delete returnedObject._v;
     }
 });
 
-module.exports = mongoose.model("Contact", contactSchema)
+module.exports = mongoose.model("Contact", contactSchema);
