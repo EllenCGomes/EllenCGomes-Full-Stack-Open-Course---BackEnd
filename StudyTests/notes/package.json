@@ -6,11 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf ./build && cd ../../../Full-Stack-Open-Course/StudyTests/notes && npm run build && cp -r ./build ../../../Full-Stack-Open-Course---BackEnd/StudyTests/notes",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "test": "jest --verbose"
   },
   "author": "Ellen Gomes",
   "license": "MIT",
@@ -21,6 +21,10 @@
     "mongoose": "^7.0.0"
   },
   "devDependencies": {
+    "jest": "^29.5.0",
     "nodemon": "^2.0.20"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
