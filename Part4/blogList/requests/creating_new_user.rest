@@ -2,7 +2,13 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "username": "lovelace",
-    "name": "Ada Lovelace",
-    "password": "teste2"
+    "username": "testeToken2",
+    "name": "testeToken2",
+    "password": "token2",
+    "blogs": {
+        "title": "testeToken2",
+        "author": "testeToken2",
+        "url": "testeToken2",
+        "likes": 1 
+    }
 }
