@@ -44,6 +44,7 @@ jspm_packages/
 Dockerfile
 .dockerignore
 fly.toml
+build/
 
 # TypeScript v1 declaration files
 typings/
